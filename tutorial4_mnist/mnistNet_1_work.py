@@ -34,19 +34,26 @@ inputFunction = tf.estimator.inputs.numpy_input_fn(
 predictions = mnist_classifier.predict(input_fn=inputFunction)
 
 # show a couple of images
+iToShow = []
+while len(iToShow) < 10:
+    i = np.random.randint(0, len(test_labels))
+    if i not in iToShow:
+        iToShow.append(i)
+
 iShown = -1
-for pred, expect in zip(predictions, test_labels):
+for pred, expect, image in zip(predictions, test_labels, test_data):
     iShown += 1
-    if iShown > 10:
-        break
+    if iShown not in iToShow:
+        continue
 
     # prepare the test picture
-    testPic = np.flipud(test_data[iShown,:].reshape((28,28), order="F").T)
+    testPic = np.flipud(image.reshape((28,28), order="F").T)
     x, y = np.meshgrid(np.linspace(0, 1, 28), np.linspace(0, 1, 28))
 
     # plot
     fig, axarr = plt.subplots(1, 2, figsize=(6,4))
-    plt.suptitle("This should be a {:d} and we think it is a {:d}".format(expect, pred["classes"]))
+    plt.suptitle("Test image {:d}: this should be a {:d} and we think it is a {:d}".format(
+        iShown, expect, pred["classes"]))
     plt.subplots_adjust(left=None, bottom=None, right=None, top=None, wspace=0.3, hspace=None)
 
     axarr[0].xaxis.set_major_locator(plt.NullLocator())
