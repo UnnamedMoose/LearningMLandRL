@@ -5,25 +5,25 @@
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-import tensorflow as tf
+import tensorflow
 
 # ===
 # define a constant
-hello = tf.constant('Hello, TensorFlow!\n', name="my_first_constant")
+hello = tensorflow.constant('Hello, TensorFlow!\n', name="my_first_constant")
 
-with tf.Session() as sess:
+with tensorflow.Session() as sess:
     # execute the constant in the session which evaluates it; print the result
     print(sess.run(hello))
 
 # ===
 # define some more constants, none of these are actually initialised yet
-x = tf.constant([[37.0, -23.0], [1.0, 4.0]])
-w = tf.Variable(tf.random_uniform([2, 2]))
-y = tf.matmul(x, w)
-output = tf.nn.softmax(y)
+x = tensorflow.constant([[37.0, -23.0], [1.0, 4.0]])
+w = tensorflow.Variable(tensorflow.random_uniform([2, 2]))
+y = tensorflow.matmul(x, w)
+output = tensorflow.nn.softmax(y)
 init_op = w.initializer
 
-with tf.Session() as sess:
+with tensorflow.Session() as sess:
     # Run the initializer on `w`.
     sess.run(init_op)
 
