@@ -19,6 +19,8 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib.animation import FuncAnimation
 from stable_baselines3 import DQN
+import pyglet
+import datetime
 
 font = {"family": "serif",
         "weight": "normal",
@@ -82,7 +84,10 @@ print("Before training")
 mean_reward = evaluate_agent(model, eval_env, num_episodes=100)
 
 # Train the agent for N steps
+starttime = datetime.datetime.now()
 model.learn(total_timesteps=100000, log_interval=10)
+endtime = datetime.datetime.now()
+print("Training took {:.0f} seconds".format((endtime-starttime).total_seconds()))
 
 # Evaluate the trained agent
 print("After training")
@@ -108,12 +113,16 @@ def save_frames_as_mp4(frames, path='../Figures/animations', filename='gym_anima
     anim.save(os.path.join(path, filename), writer=writer)
 
 
-# Reset the evironment for a new simulation and run it.
-state = env.reset()
-frames, mean_reward = evaluate_agent(model, eval_env, render=True, num_episodes=1)
-print("Finished final test episode, reward={:.2f}".format(mean_reward))
+# Reset the evironment for a new simulation and run it to make a movie.
+try:
+    state = env.reset()
+    frames, mean_reward = evaluate_agent(model, eval_env, render=True, num_episodes=1)
+    print("Finished final test episode, reward={:.2f}".format(mean_reward))
+    
+    env.close()
+    
+    # Save renders as an animation.
+    save_frames_as_mp4(frames, filename="{}.mp4".format("DQN_stableBaselines"))
 
-env.close()
-
-# Save renders as an animation.
-save_frames_as_mp4(frames, filename="{}.mp4".format("DQN_stableBaselines"))
+except pyglet.canvas.xlib.NoSuchDisplayException:
+    print("Rendering failed, probably running on a node with no graphics?")
