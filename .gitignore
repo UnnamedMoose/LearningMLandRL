@@ -1,4 +1,8 @@
 slurm-*.out
+Figures/*.png
+Figures/*.mp4
+modelData/*.zip
+modelData/*log*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
