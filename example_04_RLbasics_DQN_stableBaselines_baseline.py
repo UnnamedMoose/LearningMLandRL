@@ -21,6 +21,8 @@ from matplotlib.animation import FuncAnimation
 import pyglet
 import datetime
 import shutil
+import platform
+import re
 
 import stable_baselines3
 from stable_baselines3.common.vec_env import VecMonitor
@@ -124,7 +126,16 @@ if __name__ == "__main__":
     # envName = 'CartPole-v0'
     envName = 'LunarLander-v2'
 
-    nProc = 8  # Number of processes to use
+    nStepsTraining = 1000000
+
+    # Number of processes to use
+    print(platform.node())
+    if re.match("red[0-9]+.cluster.local", platform.node()):  # standard iridis 5 CPU node
+        nProc = 40
+    elif re.match("pink[0-9]+.cluster.local", platform.node()):  # iridis 5 GPU node with gtx1080
+        nProc = 28
+    else:
+        nProc = 8
 
     # modelName = "DQN"
     modelName = "A2C"
@@ -154,12 +165,15 @@ if __name__ == "__main__":
 
     # Train the agent for N steps
     starttime = datetime.datetime.now()
-    model.learn(total_timesteps=200000, log_interval=10)
+    model.learn(total_timesteps=nStepsTraining, log_interval=10)
     endtime = datetime.datetime.now()
     print("Training took {:.0f} seconds".format((endtime-starttime).total_seconds()))
 
     # Store the log for comparisons.
-    shutil.rmtree(logDir+"_firstTrainingBatch")
+    try:
+        shutil.rmtree(logDir+"_firstTrainingBatch")
+    except FileNotFoundError:
+        pass
     shutil.copytree(logDir, logDir+"_firstTrainingBatch")
 
     # Save the agent.
@@ -175,7 +189,7 @@ if __name__ == "__main__":
 
     # Train the agent for N more steps
     starttime = datetime.datetime.now()
-    trained_model.learn(total_timesteps=200000, log_interval=10)
+    trained_model.learn(total_timesteps=nStepsTraining, log_interval=10)
     endtime = datetime.datetime.now()
     print("Training took {:.0f} seconds".format((endtime-starttime).total_seconds()))
 

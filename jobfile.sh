@@ -1,6 +1,11 @@
 #!/bin/bash
 
+#_SBATCH --ntasks-per-node=40
+#_SBATCH --partition=batch
+
 #SBATCH --ntasks-per-node=28
+#SBATCH --partition=gtx1080
+
 #SBATCH --nodes=1
 #SBATCH --time=12:00:00
 #SBATCH --mem=11GB
@@ -8,4 +13,4 @@
 
 module load cuda/11.0
 
-python3 example_04_RLbasics_DQN_stableBaselines_cartpole.py
+python3 example_04_RLbasics_DQN_stableBaselines_baseline.py
